@@ -1,4 +1,4 @@
-# svelte-circles
+# svelte-happy-demo
 
 A playground for developing _interactive_ SVG graphics, as a Svelte component.
 
@@ -8,6 +8,8 @@ Aims:
    - [ ] vector graphics with scripts and cascading events
 - [ ] allow working with SVG assets in separate files (editable)
 - [ ] ... (other aims still foggy)
+
+[HTML 5 SVG page](https://www.w3schools.com/html/html5_svg.asp) (w3schools) mentions that SVG were "not suited for game applications". One of the purpose of this demo is to see, how far that holds true, in 2019-20.
 
 
 ## Requirements
@@ -74,6 +76,10 @@ This should provide you the component in the other project.
 
 *<font color=red>Warning: not tried!</font>*
 
+<!-- see here if there are problems:   #remove when works
+https://docs.npmjs.com/cli/link.html
+-->
+
 See [app/App.svelte](app/App.svelte) for a sample.
 
 <!-- disabled (enable if there are properties)
@@ -111,3 +117,4 @@ Then try again `npm install`.
 
 - [lukeed/svelte-demo](https://github.com/lukeed/svelte-demo) used as a template for the `app` part (demo/testbed)
 
+- [Understanding npm-link](https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557) (Medium; Oct 2018)

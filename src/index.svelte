@@ -1,127 +1,77 @@
 <!--
-- SVGCircles node
+- HappyFace node
 -
-- Based on https://eugenkiss.github.io/7guis/tasks#circle
-- discovered via Svelte Examples
+- To be used within '<svg>' block.
+-
+- References:
+-   - based on https://eugenkiss.github.io/7guis/tasks#circle - discovered via Svelte Examples
 -->
 
+<!-- Once-for-all initializer - we need an 'SVGPoint' for coordinate transforms.
+-
+- Note: SVG 2 may offer other means for this. Check 'DOMPoint' at some point.
+-->
+<script context="module">
+  let svgPoint = null;     // SVGPoint for all instances; injected in a parent 'svg' or 'g' at first use
+</script>
+
 <script>
-  let i = 0;
-  let undoStack = [[]];
-  let circles = [];
-  let selected;
-  let adjusting = false;
-  let adjusted = false;
+  // #later
+  //import { evToSvgPointGen } from './conv.js';
 
-  function handleClick(event) {
-    if (adjusting) {
-      adjusting = false;
+  let selected;           // selected circle object, or 'null'
 
-      // if circle was adjusted,
-      // push to the stack
-      if (adjusted) push();
-      return;
-    }
+  // tbd. clicking on the face would create freckles (unless a freckle already is there)
+  //let freckles = [];
 
-    const circle = {
-      cx: event.clientX,
-      cy: event.clientY,
-      r: 50
-    };
+  //... tbd. make eventToSvgCoord function here
 
-    circles = circles.concat(circle);
-    selected = circle;
+  let thisG;    // particular SVG element
 
-    push();
+  $: active = false;  // thisG.hasClass("active");    // tbd.
+
+  // Properties
+  export let cx;
+  export let cy;
+  export let diam;
+  export let active;    // bool; am I the active face?  (smiley and more details)
+
+  //#later
+  //export let mood = "happy";    // "happy"|"nah"|"sad"
+
+  if (!svgPoint) {
+    svgPoint = undefined;   // tbd. create one next to 'thisG'
   }
 
-  function adjust(event) {
-    selected.r = +event.target.value;
-    circles = circles;
-    adjusted = true;
+  function handleClick(ev) {
+    console.log(`Face ev: ${ev}`);
+    // tbd.
   }
 
-  function select(circle, event) {
-    if (!adjusting) {
-      event.stopPropagation();
-      selected = circle;
-    }
-  }
-
-  function push() {
-    const newUndoStack = undoStack.slice(0, ++i);
-    newUndoStack.push(clone(circles));
-    undoStack = newUndoStack;
-  }
-
-  function travel(d) {
-    circles = clone(undoStack[i += d]);
-    adjusting = false;
-  }
-
-  function clone(circles) {
-    return circles.map(({ cx, cy, r }) => ({ cx, cy, r }));
-  }
 </script>
 
 <style>
-  .controls {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-  }
-
-  svg {
-    background-color: #eee;
-    width: 100%;
-    height: 100%;
-  }
-
   circle {
     stroke: black;
   }
 
-  .adjuster {
-    position: absolute;
-    width: 80%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    padding: 1em;
-    text-align: center;
-    background-color: rgba(255,255,255,0.7);
-    border-radius: 4px;
-  }
-
-  input[type='range'] {
-    width: 100%;
+  g.active {
+    fill: #fed;
+    strokeWidth: 2px
   }
 </style>
 
-<!-- HTML -->
+<!-- SVG -->
 
-<div class="controls">
-  <button on:click="{() => travel(-1)}" disabled="{i === 0}">undo</button>
-  <button on:click="{() => travel(+1)}" disabled="{i === undoStack.length -1}">redo</button>
-</div>
+<g
+  bind:this={thisG}
+  class:active={active}
+>
+  <circle cx={cx} cy={cy} r={diam/2}
+          on:click="{ev => handleClick(ev)}"
+          fill="{active ? 'red': 'white'}"
+  />
+</g>
 
-<svg on:click={handleClick} >
-  {#each circles as circle}
-    <circle cx={circle.cx} cy={circle.cy} r={circle.r}
-            on:click="{event => select(circle, event)}"
-            on:contextmenu|stopPropagation|preventDefault="{() => {
-				adjusting = !adjusting;
-				if (adjusting) selected = circle;
-			}}"
-            fill="{circle === selected ? '#ccc': 'white'}"
-    />
-  {/each}
-</svg>
-
-{#if adjusting}
-  <div class="adjuster">
-    <p>adjust diameter of circle at {selected.cx}, {selected.cy}</p>
-    <input type="range" value={selected.r} on:input={adjust}>
-  </div>
-{/if}
-
+<!-- tbd. Can we get 'fill' visuals from the styling part? Maybe not.
+-->
